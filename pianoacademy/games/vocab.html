@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KS3 Music Vocabulary Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 min-h-screen flex items-center justify-center p-6 relative">
+  <img src="logo.png" alt="Logo" class="w-12 h-12 absolute top-4 left-4 object-contain rounded-[12px]" />
+  <div class="bg-white p-8 rounded-2xl shadow-lg max-w-lg w-full text-center">
+    <h1 class="text-2xl font-bold mb-2 text-blue-700">KS3 Music Vocab Game</h1>
+    <p class="text-sm text-gray-600 mb-4">Don't worry if you get some wrong — this game is just to see where you're at and help you learn! 🎵</p>
+    <div id="scoreBoard" class="text-sm text-gray-600 mb-4"></div>
+    <div id="question" class="text-lg font-medium mb-4">Loading...</div>
+    <div id="options" class="space-y-3"></div>
+    <div id="result" class="mt-4 font-semibold text-lg"></div>
+    <button id="nextBtn" class="mt-6 hidden px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700">Next</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does 'tempo' mean?",
+        options: [
+          "The speed of the music",
+          "The pitch of the notes",
+          "The type of instruments",
+          "The dynamics of the piece"
+        ],
+        answer: "The speed of the music"
+      },
+      {
+        question: "What is a 'melody'?",
+        options: [
+          "A repeated rhythm",
+          "A tune made of musical notes",
+          "A loud sound",
+          "A group of instruments"
+        ],
+        answer: "A tune made of musical notes"
+      },
+      {
+        question: "What does 'dynamics' refer to in music?",
+        options: [
+          "The structure of the piece",
+          "How loud or soft the music is",
+          "The type of melody",
+          "The tempo changes"
+        ],
+        answer: "How loud or soft the music is"
+      },
+      {
+        question: "Which of these is a percussion instrument?",
+        options: [
+          "Violin",
+          "Trumpet",
+          "Drum",
+          "Flute"
+        ],
+        answer: "Drum"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const resultEl = document.getElementById("result");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreBoard = document.getElementById("scoreBoard");
+
+    function updateScoreBoard() {
+      scoreBoard.textContent = `Score: ${score} | Lives: ${lives}`;
+    }
+
+    function showQuestion() {
+      if (lives <= 0) {
+        questionEl.textContent = "Game Over!";
+        optionsEl.innerHTML = "";
+        resultEl.textContent = `Your final score was ${score}.`;
+        resultEl.className = "mt-4 font-semibold text-lg text-red-600";
+        nextBtn.classList.add("hidden");
+        return;
+      }
+
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      resultEl.textContent = "";
+      nextBtn.classList.add("hidden");
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.className = "w-full px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600";
+        btn.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(btn);
+      });
+
+      updateScoreBoard();
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentQuestion].answer;
+      if (selected === correct) {
+        score += 10;
+        resultEl.textContent = "Correct! ✅";
+        resultEl.className = "mt-4 font-semibold text-lg text-green-600";
+      } else {
+        lives--;
+        resultEl.textContent = `Wrong ❌ - The correct answer was: ${correct}`;
+        resultEl.className = "mt-4 font-semibold text-lg text-red-600";
+      }
+      nextBtn.classList.remove("hidden");
+      updateScoreBoard();
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion = (currentQuestion + 1) % questions.length;
+      showQuestion();
+    };
+
+    showQuestion();
+  </script>
+</body>
+</html>
